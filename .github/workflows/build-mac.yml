@@ -1,0 +1,56 @@
+name: Build Saqr Mac App
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-13
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build native macOS app
+        shell: bash
+        run: |
+          set -e
+
+          APP="Saqr للمبيعات والمخازن.app"
+
+          rm -rf build
+          mkdir -p "build/$APP/Contents/MacOS"
+          mkdir -p "build/$APP/Contents/Resources"
+
+          swiftc \
+            -target x86_64-apple-macos10.15 \
+            -framework Cocoa \
+            -framework WebKit \
+            "SaqrMacApp/AppDelegate.swift" \
+            -o "build/$APP/Contents/MacOS/SaqrMacApp"
+
+          cp "SaqrMacApp/Info.plist" \
+             "build/$APP/Contents/Info.plist"
+
+          cp "SaqrMacApp/Resources/index.html" \
+             "build/$APP/Contents/Resources/index.html"
+
+          cp "SaqrMacApp/Resources/saqr-logo.png" \
+             "build/$APP/Contents/Resources/saqr-logo.png"
+
+          cp "SaqrMacApp/Resources/product-sample.jpg" \
+             "build/$APP/Contents/Resources/product-sample.jpg"
+
+          chmod +x "build/$APP/Contents/MacOS/SaqrMacApp"
+
+          /usr/bin/codesign --force --deep --sign - "build/$APP" || true
+
+          ditto -c -k --sequesterRsrc --keepParent \
+            "build/$APP" \
+            "SaqrMacApp-Catalina.zip"
+
+      - name: Upload Mac app
+        uses: actions/upload-artifact@v4
+        with:
+          name: SaqrMacApp-Catalina
+          path: SaqrMacApp-Catalina.zip
