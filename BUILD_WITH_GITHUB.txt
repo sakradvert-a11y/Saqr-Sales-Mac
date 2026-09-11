@@ -1,0 +1,13 @@
+طريقة الحصول على ملف .app بدون Xcode:
+
+1) أنشئ Repository جديد على GitHub.
+2) ارفع محتويات هذا المجلد بالكامل.
+3) افتح تبويب Actions.
+4) اختر "Build Saqr Mac App".
+5) اضغط "Run workflow".
+6) بعد انتهاء البناء افتح الـWorkflow ثم Artifacts.
+7) حمّل SaqrMacApp-Catalina.zip.
+8) فك الضغط على جهاز Mac ثم افتح التطبيق.
+
+هذه الطريقة تستخدم جهاز Mac حقيقياً داخل GitHub Actions للبناء، لذلك لا تحتاج Xcode على جهازك.
+التطبيق غير موقع بشهادة Apple Developer؛ عند أول تشغيل قد تحتاج Control-click > Open.
