@@ -5,6 +5,7 @@
 <key>CFBundleIdentifier</key><string>com.saqr.advertising.sales</string>
 <key>CFBundleName</key><string>صقر للمبيعات والمخازن</string>
 <key>CFBundlePackageType</key><string>APPL</string>
+<key>CFBundleExecutable</key><string>SaqrMacApp</string>
 <key>LSMinimumSystemVersion</key><string>10.15</string>
 <key>NSHighResolutionCapable</key><true/>
 </dict></plist>
