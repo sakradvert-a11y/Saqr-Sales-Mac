@@ -11,14 +11,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check archive password
+        env:
+          ARCHIVE_PASSWORD: ${{ secrets.ARCHIVE_PASSWORD }}
+        run: |
+          if [ -z "$ARCHIVE_PASSWORD" ]; then
+            echo "ARCHIVE_PASSWORD secret is missing."
+            exit 1
+          fi
+
       - name: Build native macOS app
         shell: bash
+        env:
+          ARCHIVE_PASSWORD: ${{ secrets.ARCHIVE_PASSWORD }}
         run: |
           set -e
 
           APP="Saqr للمبيعات والمخازن.app"
 
           rm -rf build
+          rm -f SaqrMacApp-Catalina-Protected.zip
+
           mkdir -p "build/$APP/Contents/MacOS"
           mkdir -p "build/$APP/Contents/Resources"
 
@@ -43,14 +56,21 @@ jobs:
 
           chmod +x "build/$APP/Contents/MacOS/SaqrMacApp"
 
-          /usr/bin/codesign --force --deep --sign - "build/$APP" || true
+          /usr/bin/codesign \
+            --force \
+            --deep \
+            --sign - \
+            "build/$APP" || true
 
-          ditto -c -k --sequesterRsrc --keepParent \
-            "build/$APP" \
-            "SaqrMacApp-Catalina.zip"
+          cd build
 
-      - name: Upload Mac app
+          zip -r -q \
+            -P "$ARCHIVE_PASSWORD" \
+            "../SaqrMacApp-Catalina-Protected.zip" \
+            "$APP"
+
+      - name: Upload protected Mac app
         uses: actions/upload-artifact@v4
         with:
-          name: SaqrMacApp-Catalina
-          path: SaqrMacApp-Catalina.zip
+          name: SaqrMacApp-Catalina-Protected
+          path: SaqrMacApp-Catalina-Protected.zip
