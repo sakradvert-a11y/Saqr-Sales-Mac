@@ -36,6 +36,7 @@ jobs:
           mkdir -p "build/$APP/Contents/Resources"
 
           swiftc \
+            -parse-as-library \
             -target x86_64-apple-macos10.15 \
             -framework Cocoa \
             -framework WebKit \
